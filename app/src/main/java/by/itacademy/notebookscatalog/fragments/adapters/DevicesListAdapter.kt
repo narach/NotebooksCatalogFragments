@@ -7,13 +7,18 @@ import by.itacademy.notebookscatalog.fragments.data.NotebookItem
 import by.itacademy.notebookscatalog.fragments.databinding.ItemDeviceBinding
 
 class DevicesListAdapter(
-    var devicesList: List<NotebookItem>
+    private var devicesList: List<NotebookItem>
 ) : RecyclerView.Adapter<DevicesListAdapter.DevicesViewHolder>() {
+
+    private val logTag = "DevicesListAdapter"
 
     inner class DevicesViewHolder(private val itemDeviceBinding: ItemDeviceBinding) : RecyclerView.ViewHolder(itemDeviceBinding.root) {
 
         fun bind(notebookItem: NotebookItem) {
             itemDeviceBinding.ivDevice.setImageDrawable(notebookItem.img)
+            itemDeviceBinding.tvModel.text = notebookItem.model
+            itemDeviceBinding.tvScreen.text = notebookItem.screen
+            itemDeviceBinding.tvHardware.text = notebookItem.hardware
         }
     }
 
