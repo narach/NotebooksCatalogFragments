@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="device_models">
+        <item>HP</item>
+        <item>Asus</item>
+        <item>Lenovo</item>
+        <item>Apple</item>
+        <item>MSI</item>
+        <item>Dell</item>
+        <item>Acer</item>
+        <item>Xiaomi</item>
+    </array>
+</resources>
