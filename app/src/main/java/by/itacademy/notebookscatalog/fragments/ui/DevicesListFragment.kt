@@ -6,9 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import by.itacademy.notebookscatalog.fragments.DeviceViewModel
+import by.itacademy.notebookscatalog.fragments.MainActivity
 import by.itacademy.notebookscatalog.fragments.R
 import by.itacademy.notebookscatalog.fragments.adapters.DevicesListAdapter
 import by.itacademy.notebookscatalog.fragments.data.Device
@@ -27,6 +32,21 @@ class DevicesListFragment : Fragment(R.layout.fragment_devices_list) {
     private lateinit var devicesListAdapter: DevicesListAdapter
 
     private var devicesList = mutableListOf<DeviceItem>()
+
+    private lateinit var deviceViewModel: DeviceViewModel
+
+    lateinit var adaptorItemSelectListener: (DeviceItem) -> Unit
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        activity.let {
+            deviceViewModel = ViewModelProvider(it!!).get(DeviceViewModel::class.java)
+        }
+    }
 
     override fun onAttach(context: Context) {
         Log.d(logTag, "onAttach is called")
@@ -50,7 +70,7 @@ class DevicesListFragment : Fragment(R.layout.fragment_devices_list) {
         if(devicesList.isEmpty()) {
             initDevicesList()
 
-            devicesListAdapter = DevicesListAdapter(devicesList)
+            devicesListAdapter = DevicesListAdapter(devicesList, adaptorItemSelectListener)
         }
         binding.rvNotesList.adapter = devicesListAdapter
         binding.rvNotesList.layoutManager = LinearLayoutManager(fContext)
@@ -71,19 +91,19 @@ class DevicesListFragment : Fragment(R.layout.fragment_devices_list) {
         devicesList = mutableListOf(
             DeviceItem(
                 ContextCompat.getDrawable(fContext, R.drawable.asus_tuf),
-                "Asus TUF Gaming F15",
+                "Asus, TUF Gaming F15",
                 "15.6, 1920 x 1080",
                 "Intel Core I5, 16Gb RAM, 512Gb SSD, 4Gb Video"
             ),
             DeviceItem(
                 ContextCompat.getDrawable(fContext, R.drawable.honor_magic_book),
-                "Honor Magic 14 2020 53010 VTY",
+                "Honor, Magic 14 2020 53010 VTY",
                 "14.0, 1920 x 1080",
                 "AMD Ryzen 5, 8Gb RAM, 512Gb SSD"
             ),
             DeviceItem(
                 ContextCompat.getDrawable(fContext, R.drawable.apple_mac_book),
-                "Apple Macbook Air 13 M1 2020",
+                "Apple, Macbook Air 13 M1 2020",
                 "13.3, 2560 x 1600",
                 "Apple M1, 8Gb RAM, 256Gb SSD, M1 GPU Video"
             )

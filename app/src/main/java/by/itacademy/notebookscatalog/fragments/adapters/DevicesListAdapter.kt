@@ -7,7 +7,8 @@ import by.itacademy.notebookscatalog.fragments.data.DeviceItem
 import by.itacademy.notebookscatalog.fragments.databinding.ItemDeviceBinding
 
 class DevicesListAdapter(
-    private var devicesList: List<DeviceItem>
+    private var devicesList: List<DeviceItem>,
+    private val listener: (DeviceItem) -> Unit
 ) : RecyclerView.Adapter<DevicesListAdapter.DevicesViewHolder>() {
 
     private val logTag = "DevicesListAdapter"
@@ -30,6 +31,9 @@ class DevicesListAdapter(
 
     override fun onBindViewHolder(holder: DevicesViewHolder, position: Int) {
         holder.bind(devicesList[position])
+        holder.itemView.setOnClickListener {
+            listener(devicesList[position])
+        }
     }
 
     override fun getItemCount(): Int {

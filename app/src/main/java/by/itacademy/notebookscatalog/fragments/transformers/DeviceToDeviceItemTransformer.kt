@@ -12,7 +12,7 @@ object DeviceToDeviceItemTransformer {
     fun transform(device: Device, context: Context) : DeviceItem {
         return DeviceItem(
             uriToDrawable(device.imageUri, context),
-            "${device.brand} ${device.model}",
+            "${device.brand}, ${device.model}",
             "",
             "${device.processor}, RAM: ${device.ram}Gb, ${device.drive} Gb SSD"
         )

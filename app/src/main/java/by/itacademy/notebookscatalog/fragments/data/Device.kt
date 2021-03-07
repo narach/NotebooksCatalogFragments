@@ -8,4 +8,6 @@ data class Device(
     var drive: Int?,
     var processor: String?,
     var imageUri: String?
-)
+) {
+    constructor() : this("", "", DeviceType.NOTEBOOK, 0, 0, "", "")
+}
