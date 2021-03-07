@@ -3,22 +3,22 @@ package by.itacademy.notebookscatalog.fragments.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import by.itacademy.notebookscatalog.fragments.data.NotebookItem
+import by.itacademy.notebookscatalog.fragments.data.DeviceItem
 import by.itacademy.notebookscatalog.fragments.databinding.ItemDeviceBinding
 
 class DevicesListAdapter(
-    private var devicesList: List<NotebookItem>
+    private var devicesList: List<DeviceItem>
 ) : RecyclerView.Adapter<DevicesListAdapter.DevicesViewHolder>() {
 
     private val logTag = "DevicesListAdapter"
 
     inner class DevicesViewHolder(private val itemDeviceBinding: ItemDeviceBinding) : RecyclerView.ViewHolder(itemDeviceBinding.root) {
 
-        fun bind(notebookItem: NotebookItem) {
-            itemDeviceBinding.ivDevice.setImageDrawable(notebookItem.img)
-            itemDeviceBinding.tvModel.text = notebookItem.model
-            itemDeviceBinding.tvScreen.text = notebookItem.screen
-            itemDeviceBinding.tvHardware.text = notebookItem.hardware
+        fun bind(deviceItem: DeviceItem) {
+            itemDeviceBinding.ivDevice.setImageDrawable(deviceItem.img)
+            itemDeviceBinding.tvModel.text = deviceItem.model
+            itemDeviceBinding.tvScreen.text = deviceItem.screen
+            itemDeviceBinding.tvHardware.text = deviceItem.hardware
         }
     }
 

@@ -4,11 +4,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import by.itacademy.notebookscatalog.fragments.communication.OnDeviceCreatedListener
+import by.itacademy.notebookscatalog.fragments.data.Device
 import by.itacademy.notebookscatalog.fragments.databinding.ActivityMainBinding
 import by.itacademy.notebookscatalog.fragments.ui.DeviceAddFragment
 import by.itacademy.notebookscatalog.fragments.ui.DevicesListFragment
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnDeviceCreatedListener  {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var fDevicesList: DevicesListFragment
@@ -39,4 +41,11 @@ class MainActivity : AppCompatActivity() {
             replace(R.id.flFragment, fragment)
             commit()
         }
+
+    override fun onDeviceCreated(device: Device?) {
+        device?.let {
+            fDevicesList.onDeviceCreated(it)
+        }
+    }
+
 }

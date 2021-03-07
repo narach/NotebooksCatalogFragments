@@ -10,4 +10,13 @@
         <item>Acer</item>
         <item>Xiaomi</item>
     </array>
+
+    <array name="proc_models">
+        <item>Intel Core i5</item>
+        <item>Intel Core i7</item>
+        <item>Intel Core i9</item>
+        <item>Apple M1</item>
+        <item>AMD Ryzen 5</item>
+        <item>AMD Ryzen 3</item>
+    </array>
 </resources>
