@@ -70,7 +70,7 @@ class DevicesListFragment : Fragment(R.layout.fragment_devices_list) {
         if(devicesList.isEmpty()) {
             initDevicesList()
 
-            devicesListAdapter = DevicesListAdapter(devicesList, adaptorItemSelectListener)
+            devicesListAdapter = DevicesListAdapter(devicesList, adaptorItemSelectListener, fContext as MainActivity)
         }
         binding.rvNotesList.adapter = devicesListAdapter
         binding.rvNotesList.layoutManager = LinearLayoutManager(fContext)

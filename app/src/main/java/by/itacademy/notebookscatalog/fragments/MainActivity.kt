@@ -16,11 +16,11 @@ import by.itacademy.notebookscatalog.fragments.ui.DevicesListFragment
 class MainActivity : AppCompatActivity(), OnDeviceCreatedListener  {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var fDevicesList: DevicesListFragment
+    lateinit var fDevicesList: DevicesListFragment
     private lateinit var fDeviceAdd: DeviceAddFragment
-    private lateinit var fDeviceEdit: DeviceEditFragment
+    lateinit var fDeviceEdit: DeviceEditFragment
 
-    private lateinit var deviceViewModel: DeviceViewModel
+    lateinit var deviceViewModel: DeviceViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), OnDeviceCreatedListener  {
         }
     }
 
-    private fun setCurrentFragment(fragment: Fragment) =
+    fun setCurrentFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.flFragment, fragment)
             commit()
