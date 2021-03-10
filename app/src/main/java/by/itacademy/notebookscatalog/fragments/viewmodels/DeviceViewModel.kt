@@ -1,4 +1,4 @@
-package by.itacademy.notebookscatalog.fragments
+package by.itacademy.notebookscatalog.fragments.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

@@ -7,7 +7,8 @@ data class Device(
     var ram: Int?,
     var drive: Int?,
     var processor: String?,
-    var imageUri: String?
+    var imageUri: String?,
+    var screen: Screen?
 ) {
-    constructor() : this("", "", DeviceType.NOTEBOOK, 0, 0, "", "")
+    constructor() : this("", "", DeviceType.NOTEBOOK, 0, 0, "", "", Screen())
 }

@@ -3,7 +3,7 @@ package by.itacademy.notebookscatalog.fragments.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import by.itacademy.notebookscatalog.fragments.MainActivity
+import by.itacademy.notebookscatalog.fragments.ui.activities.MainActivity
 import by.itacademy.notebookscatalog.fragments.R
 import by.itacademy.notebookscatalog.fragments.data.DeviceItem
 import by.itacademy.notebookscatalog.fragments.databinding.ItemDeviceBinding
@@ -49,9 +49,6 @@ class DevicesListAdapter(
             bottomMenu.selectedItemId = R.id.miEdit
             context.setCurrentFragment(context.fDeviceEdit)
         }
-//        holder.itemView.setOnClickListener {
-//            listener(devicesList[position])
-//        }
     }
 
     override fun getItemCount(): Int {

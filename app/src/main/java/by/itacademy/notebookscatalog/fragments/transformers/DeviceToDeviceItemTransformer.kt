@@ -13,7 +13,7 @@ object DeviceToDeviceItemTransformer {
         return DeviceItem(
             uriToDrawable(device.imageUri, context),
             "${device.brand}, ${device.model}",
-            "",
+            "${device.screen?.size} ${device.screen?.resolution}",
             "${device.processor}, RAM: ${device.ram}Gb, ${device.drive} Gb SSD"
         )
     }

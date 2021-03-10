@@ -19,4 +19,17 @@
         <item>AMD Ryzen 5</item>
         <item>AMD Ryzen 3</item>
     </array>
+
+    <array name="screens">
+        <item>13,3</item>
+        <item>14,0</item>
+        <item>15,4</item>
+        <item>16,0</item>
+    </array>
+
+    <array name="resolutions">
+        <item>1920x1080</item>
+        <item>2560x1600</item>
+        <item>3840x2160</item>
+    </array>
 </resources>

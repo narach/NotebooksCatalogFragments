@@ -1,4 +1,4 @@
-package by.itacademy.notebookscatalog.fragments.ui
+package by.itacademy.notebookscatalog.fragments.ui.fragments
 
 import android.content.Context
 import android.content.Intent
@@ -15,10 +15,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import by.itacademy.notebookscatalog.fragments.R
 import by.itacademy.notebookscatalog.fragments.communication.OnDeviceCreatedListener
 import by.itacademy.notebookscatalog.fragments.data.Device
 import by.itacademy.notebookscatalog.fragments.data.DeviceType
+import by.itacademy.notebookscatalog.fragments.data.Screen
 import by.itacademy.notebookscatalog.fragments.databinding.FragmentDeviceAddBinding
 import java.lang.RuntimeException
 
@@ -54,7 +56,7 @@ class DeviceAddFragment : Fragment(R.layout.fragment_device_add), AdapterView.On
     ): View? {
         Log.d(logTag, "onCreateView is called")
         _binding = FragmentDeviceAddBinding.inflate(inflater, container, false)
-        newDevice = Device(null, null, null, 0, 0, null, null)
+        newDevice = Device(null, null, null, 0, 0, null, null, null)
         return binding.root
     }
 
@@ -134,16 +136,20 @@ class DeviceAddFragment : Fragment(R.layout.fragment_device_add), AdapterView.On
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        binding.sbDrive.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                binding.tvDrive.text = "$progress Gb"
-                newDevice?.drive = progress
+        binding.slDrive.addOnChangeListener { slider, value, fromUser ->
+            Log.d(logTag, "Drive size: ${value}")
+            binding.etDriveSize.setText(value.toInt().toString())
+            newDevice?.drive = value.toInt()
+        }
+
+        binding.etDriveSize.addTextChangedListener { object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val driveSizeValue = s.toString().toFloat()
+                binding.slDrive.value = driveSizeValue
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
+            override fun afterTextChanged(s: Editable?) {}
+        }}
 
         binding.ivNoteImg.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
@@ -155,6 +161,45 @@ class DeviceAddFragment : Fragment(R.layout.fragment_device_add), AdapterView.On
             newDevice?.let { device ->
                 Log.d(logTag, device.toString())
                 mListener.onDeviceCreated(newDevice)
+            }
+        }
+
+        binding.spSize.prompt = "Screen Size(inches)"
+        val screenSizeAdapter = ArrayAdapter.createFromResource(
+            fContext,
+            R.array.screens,
+            android.R.layout.simple_spinner_dropdown_item
+        )
+        procAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spSize.adapter = screenSizeAdapter
+        binding.spSize.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                newDevice?.screen?.size = parent?.getItemAtPosition(position).toString()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                newDevice?.screen = Screen()
+            }
+        }
+
+        binding.spResolution.prompt = "Screen resolution"
+        binding.spResolution.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                newDevice?.screen?.resolution = parent?.getItemAtPosition(position).toString()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                newDevice?.screen = Screen()
             }
         }
     }

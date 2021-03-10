@@ -1,4 +1,4 @@
-package by.itacademy.notebookscatalog.fragments.ui
+package by.itacademy.notebookscatalog.fragments.ui.fragments
 
 import android.content.Intent
 import android.net.Uri
@@ -12,8 +12,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import by.itacademy.notebookscatalog.fragments.DeviceViewModel
-import by.itacademy.notebookscatalog.fragments.MainActivity
+import by.itacademy.notebookscatalog.fragments.viewmodels.DeviceViewModel
+import by.itacademy.notebookscatalog.fragments.ui.activities.MainActivity
 import by.itacademy.notebookscatalog.fragments.R
 import by.itacademy.notebookscatalog.fragments.databinding.FragmentDeviceEditBinding
 import by.itacademy.notebookscatalog.fragments.transformers.DeviceToDeviceItemTransformer

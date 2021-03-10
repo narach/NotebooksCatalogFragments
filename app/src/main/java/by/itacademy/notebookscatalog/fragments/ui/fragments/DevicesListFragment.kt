@@ -1,4 +1,4 @@
-package by.itacademy.notebookscatalog.fragments.ui
+package by.itacademy.notebookscatalog.fragments.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -6,20 +6,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.itacademy.notebookscatalog.fragments.DeviceViewModel
-import by.itacademy.notebookscatalog.fragments.MainActivity
+import by.itacademy.notebookscatalog.fragments.viewmodels.DeviceViewModel
+import by.itacademy.notebookscatalog.fragments.ui.activities.MainActivity
 import by.itacademy.notebookscatalog.fragments.R
 import by.itacademy.notebookscatalog.fragments.adapters.DevicesListAdapter
 import by.itacademy.notebookscatalog.fragments.data.Device
 import by.itacademy.notebookscatalog.fragments.data.DeviceItem
 import by.itacademy.notebookscatalog.fragments.databinding.FragmentDevicesListBinding
 import by.itacademy.notebookscatalog.fragments.transformers.DeviceToDeviceItemTransformer
+import by.itacademy.notebookscatalog.fragments.viewmodels.DeviceListViewModel
 
 class DevicesListFragment : Fragment(R.layout.fragment_devices_list) {
 
@@ -29,17 +29,12 @@ class DevicesListFragment : Fragment(R.layout.fragment_devices_list) {
     private val binding get() = _binding!!
 
     private lateinit var fContext: Context
-    private lateinit var devicesListAdapter: DevicesListAdapter
-
-    private var devicesList = mutableListOf<DeviceItem>()
+    private var devicesListAdapter: DevicesListAdapter? = null
 
     private lateinit var deviceViewModel: DeviceViewModel
+    private val deviceListViewModel: DeviceListViewModel by activityViewModels()
 
     lateinit var adaptorItemSelectListener: (DeviceItem) -> Unit
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -67,9 +62,8 @@ class DevicesListFragment : Fragment(R.layout.fragment_devices_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if(devicesList.isEmpty()) {
-            initDevicesList()
-
+        if(devicesListAdapter == null) {
+            var devicesList = deviceListViewModel.devicesList
             devicesListAdapter = DevicesListAdapter(devicesList, adaptorItemSelectListener, fContext as MainActivity)
         }
         binding.rvNotesList.adapter = devicesListAdapter
@@ -83,30 +77,8 @@ class DevicesListFragment : Fragment(R.layout.fragment_devices_list) {
 
     fun onDeviceCreated(device: Device) {
         val deviceItem = DeviceToDeviceItemTransformer.transform(device, fContext)
-        devicesList.add(deviceItem)
-        devicesListAdapter.notifyItemInserted(devicesList.size - 1)
+        deviceListViewModel.devicesList.add(deviceItem)
+        devicesListAdapter?.notifyItemInserted(deviceListViewModel.devicesList.size - 1)
     }
 
-    private fun initDevicesList() {
-        devicesList = mutableListOf(
-            DeviceItem(
-                ContextCompat.getDrawable(fContext, R.drawable.asus_tuf),
-                "Asus, TUF Gaming F15",
-                "15.6, 1920 x 1080",
-                "Intel Core I5, 16Gb RAM, 512Gb SSD, 4Gb Video"
-            ),
-            DeviceItem(
-                ContextCompat.getDrawable(fContext, R.drawable.honor_magic_book),
-                "Honor, Magic 14 2020 53010 VTY",
-                "14.0, 1920 x 1080",
-                "AMD Ryzen 5, 8Gb RAM, 512Gb SSD"
-            ),
-            DeviceItem(
-                ContextCompat.getDrawable(fContext, R.drawable.apple_mac_book),
-                "Apple, Macbook Air 13 M1 2020",
-                "13.3, 2560 x 1600",
-                "Apple M1, 8Gb RAM, 256Gb SSD, M1 GPU Video"
-            )
-        )
-    }
 }
