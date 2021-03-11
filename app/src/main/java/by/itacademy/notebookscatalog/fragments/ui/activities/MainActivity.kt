@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import by.itacademy.notebookscatalog.fragments.R
 import by.itacademy.notebookscatalog.fragments.data.Device
 import by.itacademy.notebookscatalog.fragments.databinding.ActivityMainBinding
@@ -14,8 +13,8 @@ import by.itacademy.notebookscatalog.fragments.listeners.OnFragmentCommunication
 import by.itacademy.notebookscatalog.fragments.ui.fragments.DeviceAddFragment
 import by.itacademy.notebookscatalog.fragments.ui.fragments.DeviceEditFragment
 import by.itacademy.notebookscatalog.fragments.ui.fragments.DevicesListFragment
+import by.itacademy.notebookscatalog.fragments.viewmodels.DeviceListVM
 import by.itacademy.notebookscatalog.fragments.viewmodels.DeviceListViewModel
-import by.itacademy.notebookscatalog.fragments.viewmodels.DeviceViewModel
 
 class MainActivity : AppCompatActivity(), OnFragmentCommunicationListener {
 
@@ -24,7 +23,6 @@ class MainActivity : AppCompatActivity(), OnFragmentCommunicationListener {
     private lateinit var fDeviceAdd: DeviceAddFragment
     private lateinit var fDeviceEdit: DeviceEditFragment
 
-    lateinit var deviceViewModel: DeviceViewModel
     private val deviceListViewModel: DeviceListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,8 +31,7 @@ class MainActivity : AppCompatActivity(), OnFragmentCommunicationListener {
         val rootView = binding.root
         setContentView(rootView)
 
-        deviceViewModel = ViewModelProvider(this).get(DeviceViewModel::class.java)
-        deviceListViewModel.devicesList = InitHelper.initDevicesList(this)
+        deviceListViewModel.loadDevices(InitHelper.initDevicesList(this))
 
         fDevicesList = DevicesListFragment(this)
         fDeviceAdd = DeviceAddFragment(this)
@@ -68,7 +65,7 @@ class MainActivity : AppCompatActivity(), OnFragmentCommunicationListener {
     }
 
     override fun updateDevice(index: Int) {
-        deviceListViewModel.selectedIndex = index
+        deviceListViewModel.selectItem(index)
         binding.bottomNavigationView.selectedItemId = R.id.miEdit
         setCurrentFragment(fDeviceEdit)
     }

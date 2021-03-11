@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.itacademy.notebookscatalog.fragments.R
 import by.itacademy.notebookscatalog.fragments.adapters.DevicesListAdapter
+import by.itacademy.notebookscatalog.fragments.data.DeviceItem
 import by.itacademy.notebookscatalog.fragments.databinding.FragmentDevicesListBinding
 import by.itacademy.notebookscatalog.fragments.listeners.OnFragmentCommunicationListener
 import by.itacademy.notebookscatalog.fragments.viewmodels.DeviceListViewModel
@@ -23,9 +25,10 @@ class DevicesListFragment(val fragmentNavigation: OnFragmentCommunicationListene
     private val binding get() = _binding!!
 
     private lateinit var fContext: Context
-    private var devicesListAdapter: DevicesListAdapter? = null
 
     private val deviceListViewModel: DeviceListViewModel by activityViewModels()
+
+    private lateinit var devicesListAdapter: DevicesListAdapter
 
     override fun onAttach(context: Context) {
         Log.d(logTag, "onAttach is called")
@@ -45,9 +48,16 @@ class DevicesListFragment(val fragmentNavigation: OnFragmentCommunicationListene
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        devicesListAdapter = DevicesListAdapter(deviceListViewModel.devicesList, fragmentNavigation)
+        devicesListAdapter = DevicesListAdapter(deviceListViewModel.devicesListLiveData.value!!, fragmentNavigation)
         binding.rvNotesList.adapter = devicesListAdapter
         binding.rvNotesList.layoutManager = LinearLayoutManager(fContext)
+
+        deviceListViewModel.devicesListLiveData.observe(
+            viewLifecycleOwner,
+            Observer<MutableList<DeviceItem>> {
+                devicesListAdapter.notifyDataSetChanged()
+            }
+        )
     }
 
     override fun onDestroyView() {

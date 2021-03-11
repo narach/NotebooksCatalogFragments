@@ -158,7 +158,7 @@ class DeviceAddFragment(val fragmentNavigation: OnFragmentCommunicationListener)
         binding.btnCreate.setOnClickListener {
             newDevice?.let { device ->
                 Log.d(logTag, device.toString())
-                deviceListViewModel.devicesList.add(DeviceToDeviceItemTransformer.transform(device, fContext))
+                deviceListViewModel.addDevice(DeviceToDeviceItemTransformer.transform(device, fContext))
                 fragmentNavigation.listDevices()
             }
         }

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import by.itacademy.notebookscatalog.fragments.R
 import by.itacademy.notebookscatalog.fragments.data.DeviceItem
 import by.itacademy.notebookscatalog.fragments.databinding.FragmentDeviceEditBinding
@@ -29,7 +30,13 @@ class DeviceEditFragment(private val fragmentNavigation: OnFragmentCommunication
     private val binding get() = _binding!!
 
     private val deviceListViewModel: DeviceListViewModel by activityViewModels()
-    private lateinit var selectedDevice: DeviceItem
+    private var selectedDevice: DeviceItem = DeviceItem(null, "Model", null, null)
+
+    private var selectedItemId: Int? = null
+
+    fun selectItem(selectedIndex: Int) {
+        selectedItemId = selectedIndex
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,18 +50,24 @@ class DeviceEditFragment(private val fragmentNavigation: OnFragmentCommunication
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        selectedDevice = deviceListViewModel.devicesList[deviceListViewModel.selectedIndex!!]
 
         with(binding) {
-            etModelEdit.setText(selectedDevice.model)
-            etScreenEdit.setText(selectedDevice.screen)
-            etHardwareEdit.setText(selectedDevice.hardware)
-            ivDevice.setImageDrawable(selectedDevice.img)
+            deviceListViewModel.devicesListLiveData.observe(
+                viewLifecycleOwner,
+                Observer<MutableList<DeviceItem>> { deviceList ->
+                    etModelEdit.setText(deviceList[deviceListViewModel.selectedIndex.value!!].model)
+                    etScreenEdit.setText(deviceList[deviceListViewModel.selectedIndex.value!!].screen)
+                    etHardwareEdit.setText(deviceList[deviceListViewModel.selectedIndex.value!!].hardware)
+                    ivDevice.setImageDrawable(deviceList[deviceListViewModel.selectedIndex.value!!].img)
+                }
+            )
 
             btnSave.setOnClickListener {
                 selectedDevice.hardware = etHardwareEdit.text.toString()
                 selectedDevice.screen = etScreenEdit.text.toString()
                 selectedDevice.model = etModelEdit.text.toString()
+                selectedDevice.img = DeviceToDeviceItemTransformer.uriToDrawable(imgUri.toString(), requireContext())
+                deviceListViewModel.updateDeviceAtPosition(selectedDevice, deviceListViewModel.selectedIndex.value!!)
                 fragmentNavigation.listDevices()
             }
 
