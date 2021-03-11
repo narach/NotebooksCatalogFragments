@@ -3,23 +3,16 @@ package by.itacademy.notebookscatalog.fragments.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import by.itacademy.notebookscatalog.fragments.ui.activities.MainActivity
-import by.itacademy.notebookscatalog.fragments.R
 import by.itacademy.notebookscatalog.fragments.data.DeviceItem
 import by.itacademy.notebookscatalog.fragments.databinding.ItemDeviceBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import by.itacademy.notebookscatalog.fragments.listeners.OnFragmentCommunicationListener
 
 class DevicesListAdapter(
     private var devicesList: List<DeviceItem>,
-    private val listener: (DeviceItem) -> Unit,
-    private val context: MainActivity
+    private val fragmentsNavigation: OnFragmentCommunicationListener,
 ) : RecyclerView.Adapter<DevicesListAdapter.DevicesViewHolder>() {
 
-    private val logTag = "DevicesListAdapter"
-
-    private var selectedItem: ItemDeviceBinding? = null
-
-    inner class DevicesViewHolder(val itemDeviceBinding: ItemDeviceBinding) : RecyclerView.ViewHolder(itemDeviceBinding.root) {
+    inner class DevicesViewHolder(private val itemDeviceBinding: ItemDeviceBinding) : RecyclerView.ViewHolder(itemDeviceBinding.root) {
 
         fun bind(deviceItem: DeviceItem) {
             itemDeviceBinding.ivDevice.setImageDrawable(deviceItem.img)
@@ -38,16 +31,7 @@ class DevicesListAdapter(
     override fun onBindViewHolder(holder: DevicesViewHolder, position: Int) {
         holder.bind(devicesList[position])
         holder.itemView.setOnClickListener {
-            holder.itemDeviceBinding.cbSelected.isChecked = true
-            selectedItem?.let { item ->
-                item.cbSelected.isChecked = false
-            }
-            selectedItem = holder.itemDeviceBinding
-            var selectedItem = devicesList[position]
-            context.deviceViewModel.select(selectedItem)
-            val bottomMenu = context.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-            bottomMenu.selectedItemId = R.id.miEdit
-            context.setCurrentFragment(context.fDeviceEdit)
+            fragmentsNavigation.updateDevice(position)
         }
     }
 

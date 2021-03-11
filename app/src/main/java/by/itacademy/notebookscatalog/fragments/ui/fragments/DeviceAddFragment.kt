@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,15 +15,18 @@ import android.widget.ArrayAdapter
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import by.itacademy.notebookscatalog.fragments.R
-import by.itacademy.notebookscatalog.fragments.communication.OnDeviceCreatedListener
 import by.itacademy.notebookscatalog.fragments.data.Device
 import by.itacademy.notebookscatalog.fragments.data.DeviceType
 import by.itacademy.notebookscatalog.fragments.data.Screen
 import by.itacademy.notebookscatalog.fragments.databinding.FragmentDeviceAddBinding
-import java.lang.RuntimeException
+import by.itacademy.notebookscatalog.fragments.listeners.OnFragmentCommunicationListener
+import by.itacademy.notebookscatalog.fragments.transformers.DeviceToDeviceItemTransformer
+import by.itacademy.notebookscatalog.fragments.viewmodels.DeviceListViewModel
 
-class DeviceAddFragment : Fragment(R.layout.fragment_device_add), AdapterView.OnItemSelectedListener {
+class DeviceAddFragment(val fragmentNavigation: OnFragmentCommunicationListener) : Fragment(R.layout.fragment_device_add), AdapterView.OnItemSelectedListener {
 
     val SELECT_IMAGE_CODE = 2
 
@@ -35,19 +37,15 @@ class DeviceAddFragment : Fragment(R.layout.fragment_device_add), AdapterView.On
     private var _binding: FragmentDeviceAddBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var mListener: OnDeviceCreatedListener
     private lateinit var fContext: Context
     private var newDevice: Device? = null
+
+    private val deviceListViewModel: DeviceListViewModel by activityViewModels()
 
     override fun onAttach(context: Context) {
         Log.d(logTag, "onAttach is called")
         super.onAttach(context)
         fContext = context
-        if(context is OnDeviceCreatedListener) {
-            mListener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentCommunicationListener")
-        }
     }
 
     override fun onCreateView(
@@ -56,7 +54,7 @@ class DeviceAddFragment : Fragment(R.layout.fragment_device_add), AdapterView.On
     ): View? {
         Log.d(logTag, "onCreateView is called")
         _binding = FragmentDeviceAddBinding.inflate(inflater, container, false)
-        newDevice = Device(null, null, null, 0, 0, null, null, null)
+        newDevice = Device(null, null, null, 0, 0, null, null, Screen())
         return binding.root
     }
 
@@ -136,8 +134,8 @@ class DeviceAddFragment : Fragment(R.layout.fragment_device_add), AdapterView.On
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        binding.slDrive.addOnChangeListener { slider, value, fromUser ->
-            Log.d(logTag, "Drive size: ${value}")
+        binding.slDrive.addOnChangeListener { _, value, _ ->
+            Log.d(logTag, "Drive size: $value")
             binding.etDriveSize.setText(value.toInt().toString())
             newDevice?.drive = value.toInt()
         }
@@ -160,7 +158,8 @@ class DeviceAddFragment : Fragment(R.layout.fragment_device_add), AdapterView.On
         binding.btnCreate.setOnClickListener {
             newDevice?.let { device ->
                 Log.d(logTag, device.toString())
-                mListener.onDeviceCreated(newDevice)
+                deviceListViewModel.devicesList.add(DeviceToDeviceItemTransformer.transform(device, fContext))
+                fragmentNavigation.listDevices()
             }
         }
 
@@ -182,9 +181,7 @@ class DeviceAddFragment : Fragment(R.layout.fragment_device_add), AdapterView.On
                 newDevice?.screen?.size = parent?.getItemAtPosition(position).toString()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                newDevice?.screen = Screen()
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
         binding.spResolution.prompt = "Screen resolution"
@@ -198,9 +195,7 @@ class DeviceAddFragment : Fragment(R.layout.fragment_device_add), AdapterView.On
                 newDevice?.screen?.resolution = parent?.getItemAtPosition(position).toString()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                newDevice?.screen = Screen()
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 

@@ -3,23 +3,21 @@ package by.itacademy.notebookscatalog.fragments.ui.fragments
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import by.itacademy.notebookscatalog.fragments.viewmodels.DeviceViewModel
-import by.itacademy.notebookscatalog.fragments.ui.activities.MainActivity
+import androidx.fragment.app.activityViewModels
 import by.itacademy.notebookscatalog.fragments.R
+import by.itacademy.notebookscatalog.fragments.data.DeviceItem
 import by.itacademy.notebookscatalog.fragments.databinding.FragmentDeviceEditBinding
+import by.itacademy.notebookscatalog.fragments.listeners.OnFragmentCommunicationListener
 import by.itacademy.notebookscatalog.fragments.transformers.DeviceToDeviceItemTransformer
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import by.itacademy.notebookscatalog.fragments.viewmodels.DeviceListViewModel
 
-class DeviceEditFragment : Fragment(R.layout.fragment_device_edit) {
+class DeviceEditFragment(private val fragmentNavigation: OnFragmentCommunicationListener) : Fragment(R.layout.fragment_device_edit) {
 
     private val selImgCode = 1
 
@@ -30,20 +28,8 @@ class DeviceEditFragment : Fragment(R.layout.fragment_device_edit) {
     private var _binding: FragmentDeviceEditBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var deviceViewModel: DeviceViewModel
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        activity.let {
-            deviceViewModel = ViewModelProvider(it!!).get(DeviceViewModel::class.java)
-            with(binding) {
-                etModelEdit.setText(deviceViewModel.selected.value?.model)
-                etScreenEdit.setText(deviceViewModel.selected.value?.screen)
-                etHardwareEdit.setText(deviceViewModel.selected.value?.hardware)
-                ivDevice.setImageDrawable(deviceViewModel.selected.value?.img)
-            }
-        }
-    }
+    private val deviceListViewModel: DeviceListViewModel by activityViewModels()
+    private lateinit var selectedDevice: DeviceItem
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,54 +43,19 @@ class DeviceEditFragment : Fragment(R.layout.fragment_device_edit) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        selectedDevice = deviceListViewModel.devicesList[deviceListViewModel.selectedIndex!!]
+
         with(binding) {
-            etModelEdit.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-                override fun onTextChanged(newValue: CharSequence?, start: Int, before: Int, count: Int) {
-                    deviceViewModel.selected.value?.model = newValue.toString()
-                }
-                override fun afterTextChanged(s: Editable?) {
-                }
-            })
+            etModelEdit.setText(selectedDevice.model)
+            etScreenEdit.setText(selectedDevice.screen)
+            etHardwareEdit.setText(selectedDevice.hardware)
+            ivDevice.setImageDrawable(selectedDevice.img)
 
-            etHardwareEdit.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-                override fun onTextChanged(newValue: CharSequence?, start: Int, before: Int, count: Int) {
-                    deviceViewModel.selected.value?.hardware = newValue.toString()
-                }
-                override fun afterTextChanged(s: Editable?) {
-                }
-            })
-
-            etScreenEdit.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-                override fun onTextChanged(newValue: CharSequence?, start: Int, before: Int, count: Int) {
-                    deviceViewModel.selected.value?.screen = newValue.toString()
-                }
-                override fun afterTextChanged(s: Editable?) {
-                }
-            })
-
-            btnBack.setOnClickListener {
-                val mainActivity = activity as MainActivity
-                val bottomMenu = mainActivity.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-                bottomMenu.selectedItemId = R.id.miHome
-                mainActivity.setCurrentFragment(mainActivity.fDevicesList)
+            btnSave.setOnClickListener {
+                selectedDevice.hardware = etHardwareEdit.text.toString()
+                selectedDevice.screen = etScreenEdit.text.toString()
+                selectedDevice.model = etModelEdit.text.toString()
+                fragmentNavigation.listDevices()
             }
 
             ivDevice.setOnClickListener {
@@ -120,7 +71,7 @@ class DeviceEditFragment : Fragment(R.layout.fragment_device_edit) {
         if(resultCode == AppCompatActivity.RESULT_OK && requestCode == selImgCode) {
             imgUri = data?.data
             binding.ivDevice.setImageURI(imgUri)
-            deviceViewModel.selected.value?.img = DeviceToDeviceItemTransformer.uriToDrawable(imgUri.toString(), context!!)
+            selectedDevice.img = DeviceToDeviceItemTransformer.uriToDrawable(imgUri.toString(), requireContext())
         }
     }
 }
